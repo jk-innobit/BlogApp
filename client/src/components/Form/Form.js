@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Typography, Button, Paper, Dialog } from "@mui/material";
+import {
+  TextField,
+  Typography,
+  Button,
+  Paper,
+  Dialog,
+  IconButton,
+  Box,
+} from "@mui/material";
 import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../../actions/posts";
-// import { Context } from "../../App";
+import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
 
 const initialValues = {
   creator: "",
@@ -14,9 +23,9 @@ const initialValues = {
 };
 
 const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
-  // const { newPost, setNewPost } = useContext(Context);
   const [postData, setPostData] = useState(initialValues);
   const user = localStorage.getItem("profile");
+  const navigate = useNavigate();
 
   const post = useSelector((state) =>
     currentId ? state.posts.find((p) => p._id === currentId) : null
@@ -30,12 +39,17 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
   const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
+    setNewPost(false);
     if (currentId) {
       dispatch(
-        updatePost(currentId, { ...postData, name: user?.result?.name })
+        updatePost(
+          currentId,
+          { ...postData, name: user?.result?.name },
+          navigate
+        )
       );
     } else {
-      dispatch(createPost({ ...postData, name: user?.result?.name }));
+      dispatch(createPost({ ...postData, name: user?.result?.name }, navigate));
     }
     clear();
   };
@@ -49,22 +63,13 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
       selectedFile: "",
     });
   };
-  // useEffect(() => {
-  //   setPostData({
-  //     creator: "",
-  //     title: "",
-  //     message: "",
-  //     tags: [],
-  //     selectedFile: "",
-  //   });
-  // }, []);
 
   return (
     <Dialog
       open={newPost}
       onClose={() => {
-        setPostData(initialValues);
         setNewPost(false);
+        clear();
       }}
     >
       <Paper sx={{ marginTop: "10px", padding: "10px" }}>
@@ -74,20 +79,17 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
           onSubmit={handleSubmit}
           style={{ textAlign: "center" }}
         >
-          <Typography variant="h6">
-            {currentId ? "Editing" : "Creating"} a Post
-          </Typography>
-          <TextField
-            sx={{ marginTop: "5px" }}
-            name="creator"
-            variant="outlined"
-            label="Creator"
-            fullWidth
-            value={postData.creator}
-            onChange={(e) =>
-              setPostData({ ...postData, creator: e.target.value })
-            }
-          />
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography
+              variant="h6"
+              sx={{ width: "100%", textAlign: "center" }}
+            >
+              {currentId ? "Editing" : "Creating"} a Post
+            </Typography>
+            <IconButton onClick={() => setNewPost(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
           <TextField
             sx={{ marginTop: "5px" }}
             name="title"

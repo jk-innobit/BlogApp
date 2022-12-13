@@ -1,80 +1,43 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { Typography } from "@mui/material";
+import {
+  Box,
+  Drawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import {
+  Inbox,
+  Computer,
+  Home,
+  TimeToLeave,
+  Nature,
+  Business,
+  Pets,
+  ChevronLeft,
+} from "@mui/icons-material";
+
+import { Context } from "../../App";
+
+const categories = [
+  { key: 0, name: "Technology", path: "", icon: <Computer /> },
+  { key: 1, name: "Cars", path: "", icon: <TimeToLeave /> },
+  { key: 2, name: "Nature", path: "", icon: <Nature /> },
+  { key: 3, name: "Business", path: "", icon: <Business /> },
+  { key: 4, name: "Animals", path: "", icon: <Pets /> },
+];
 
 export default function Sidebar({ open, setOpen }) {
-  //   const toggleDrawer = (anchor, open) => (event) => {
-  //     if (
-  //       event &&
-  //       event.type === "keydown" &&
-  //       (event.key === "Tab" || event.key === "Shift")
-  //     ) {
-  //       return;
-  //     }
-  //   };
-  // console.log(open);
-
-  // const list = () => (
-  //   <Box
-  //     sx={{ width: 250 }}
-  //     role="presentation"
-  //     //   onClick={toggleDrawer(false)}
-  //     //   onKeyDown={toggleDrawer(false)}
-  //   >
-  //     <List>
-  //       {["Home", "My Post"].map((text, index) => (
-  //         <ListItem key={text} disablePadding>
-  //           <ListItemButton>
-  //             <ListItemIcon>
-  //               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-  //             </ListItemIcon>
-  //             <ListItemText primary={text} />
-  //           </ListItemButton>
-  //         </ListItem>
-  //       ))}
-  //     </List>
-  //     <Divider />
-  //     <List>
-  //       {["Technology", "Cars", "Nature", "Business", "Animals"].map(
-  //         (text, index) => (
-  //           <ListItem key={text} disablePadding>
-  //             <ListItemButton>
-  //               <ListItemIcon>
-  //                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-  //               </ListItemIcon>
-  //               <ListItemText primary={text} />
-  //             </ListItemButton>
-  //           </ListItem>
-  //         )
-  //       )}
-  //     </List>
-  //   </Box>
-  // );
+  const { userData, loggedIn } = React.useContext(Context);
 
   return (
-    <Drawer
-      anchor="left"
-      open={open}
-      onClose={() => setOpen(false)}
-      //   onOpen={toggleDrawer(true)}
-    >
-      <Box
-        sx={{ width: 250 }}
-        role="presentation"
-        //   onClick={toggleDrawer(false)}
-        //   onKeyDown={toggleDrawer(false)}
-      >
+    <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+      <Box sx={{ width: 250 }} role="presentation">
         <Typography
           sx={{
             display: "flex",
@@ -83,37 +46,39 @@ export default function Sidebar({ open, setOpen }) {
             margin: "10px",
           }}
         >
-          Welcome Jatin
+          Welcome {loggedIn && userData?.result?.name}
           <IconButton onClick={() => setOpen(false)}>
-            <ChevronLeftIcon />
+            <ChevronLeft />
           </IconButton>
         </Typography>
         <List>
-          {["Home", "My Posts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Home />
+              </ListItemIcon>
+              <ListItemText primary="Home" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Inbox />
+              </ListItemIcon>
+              <ListItemText primary="My Posts" />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
         <List>
-          {["Technology", "Cars", "Nature", "Business", "Animals"].map(
-            (text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
+          {categories.map((category) => (
+            <ListItem key={category.key} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{category.icon}</ListItemIcon>
+                <ListItemText primary={category.name} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Box>
     </Drawer>

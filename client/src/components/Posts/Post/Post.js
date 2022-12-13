@@ -13,20 +13,25 @@ import {
 import { ThumbUpAlt, Delete, MoreHoriz } from "@mui/icons-material";
 import moment from "moment";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { deletePost, likePost } from "../../../actions/posts";
 
 const Post = ({ post, setCurrentId, setNewPost }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
   return (
     <Card>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-            {post.creator.substring(0, 1)}
+            {post.creator[0]}
           </Avatar>
         }
         action={
           <IconButton
+            title="Edit"
             aria-label="settings"
             onClick={() => {
               setCurrentId(post._id);
@@ -52,16 +57,16 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
         <Button
           size="small"
           color="primary"
-          onClick={() => dispatch(likePost(post._id))}
+          onClick={() => dispatch(likePost(post._id, navigate))}
         >
           <ThumbUpAlt fontSize="small" />
           Like &nbsp;
-          {post.likeCount}
+          {post.likes.length}
         </Button>
         <Button
           size="small"
           color="primary"
-          onClick={() => dispatch(deletePost(post._id))}
+          onClick={() => dispatch(deletePost(post._id, navigate))}
         >
           <Delete fontSize="small" />
           Delete

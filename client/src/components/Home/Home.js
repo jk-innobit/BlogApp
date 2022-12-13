@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Grow, Grid } from "@mui/material";
-import Posts from "../../components/Posts/Posts";
+import Posts from "../Posts/Posts";
 import Form from "../../components/Form/Form";
 import { useDispatch } from "react-redux";
 import { getPosts } from "../../actions/posts";
@@ -15,30 +15,19 @@ const Home = () => {
   }, [dispatch]);
   return (
     <Container maxWidth="xl">
-      {/* <AppBar position="static" color="inherit">
-        <Box display="flex" justifyContent="center">
-          <Typography variant="h2" align="center">
-            Blog App
-          </Typography>
-        </Box>
-      </AppBar> */}
       <Navbar setNewPost={setNewPost} />
       <Grow in>
         <Container>
           <Grid container>
-            <Grid item>
+            <Grid item mt={6}>
               <Posts setCurrentId={setCurrentId} setNewPost={setNewPost} />
             </Grid>
-            {/* <Grid item xs={12} sm={4}> */}
-
             <Form
               currentId={currentId}
               setCurrentId={setCurrentId}
               newPost={newPost}
               setNewPost={setNewPost}
             />
-
-            {/* </Grid> */}
           </Grid>
         </Container>
       </Grow>

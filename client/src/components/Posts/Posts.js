@@ -2,13 +2,20 @@ import React from "react";
 import { Grid, CircularProgress } from "@mui/material";
 import Post from "./Post/Post";
 import { useSelector } from "react-redux";
+import Masonry from "@mui/lab/Masonry";
 
 const Posts = ({ setCurrentId, setNewPost }) => {
   const posts = useSelector((state) => state.posts);
   return !posts.length ? (
     <CircularProgress />
   ) : (
-    <Grid container alignItems="stretch" spacing={3} mt={2}>
+    <Masonry
+      columns={3}
+      spacing={1}
+      defaultHeight={450}
+      defaultColumns={3}
+      defaultSpacing={1}
+    >
       {posts.map((post) => (
         <Grid item key={post._id} xs={12} sm={4}>
           <Post
@@ -18,7 +25,7 @@ const Posts = ({ setCurrentId, setNewPost }) => {
           />
         </Grid>
       ))}
-    </Grid>
+    </Masonry>
   );
 };
 

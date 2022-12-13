@@ -13,8 +13,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { GoogleLogin } from "@react-oauth/google";
-// import jwt_decode from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { signIn } from "../../actions/auth";
 import { useNavigate } from "react-router-dom";
@@ -54,13 +52,7 @@ export default function SignIn({ setLogin }) {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
-    // console.log(formData);
     dispatch(signIn(formData, navigate));
-    // const data = new FormData(event.currentTarget);
-    // console.log({
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    // });
   };
 
   const handleShowPassword = () => {
@@ -128,10 +120,6 @@ export default function SignIn({ setLogin }) {
                 ),
               }}
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -140,16 +128,6 @@ export default function SignIn({ setLogin }) {
             >
               Sign In
             </Button>
-            {/* <Button sx={{ mt: 3, mb: 2 }} fullWidth>
-              <GoogleLogin
-                onSuccess={(credentialResponse) => {
-                  console.log(jwt_decode(credentialResponse.credential));
-                }}
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-              />
-            </Button> */}
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

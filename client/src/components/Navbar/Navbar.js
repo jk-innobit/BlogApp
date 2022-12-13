@@ -1,46 +1,46 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import Avatar from "@mui/material/Avatar";
-import Sidebar from "../Sidebar/Sidebar";
-import AddIcon from "@mui/icons-material/Add";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Tooltip,
+  MenuItem,
+  Menu,
+  Avatar,
+} from "@mui/material";
+import { Menu as MenuIcon, Add } from "@mui/icons-material";
+import { deepOrange } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
+
 import { Context } from "../../App";
-import { useContext } from "react";
+import Sidebar from "../Sidebar/Sidebar";
+import { useSelector } from "react-redux";
 
 export default function Navbar({ setNewPost }) {
-  const { loggedIn } = useContext(Context);
+  const navigate = useNavigate();
+  const { loggedIn } = React.useContext(Context);
+  const userData = JSON.parse(localStorage.getItem("profile"));
   const settings = ["Profile", "Account", "Dashboard", "Logout"];
-  // const [newPost, setNewPost] = useState(false);
-  // const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
-  //   const handleOpenNavMenu = (event) => {
-  //     setAnchorElNav(event.currentTarget);
-  //   };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
-  //   const handleCloseNavMenu = () => {
-  //     setAnchorElNav(null);
-  //   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
   return (
-    // <Box sx={{ flexGrow: 1 }}>
-    <AppBar position="fixed" color="primary" sx={{ height: "50px" }}>
+    <AppBar
+      position="fixed"
+      color="primary"
+      sx={{ height: "50px", justifyContent: "center" }}
+    >
       <Toolbar>
         <IconButton
           size="large"
@@ -57,15 +57,19 @@ export default function Navbar({ setNewPost }) {
           Blog App
         </Typography>
         <IconButton sx={{ color: "white" }} onClick={() => setNewPost(true)}>
-          <AddIcon fontSize="large" />
+          <Add fontSize="large" />
         </IconButton>
         {!loggedIn ? (
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={() => navigate("/auth")}>
+            Login
+          </Button>
         ) : (
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar sx={{ bgcolor: deepOrange[500] }}>
+                  {userData?.result?.name[0]}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -94,6 +98,5 @@ export default function Navbar({ setNewPost }) {
         )}
       </Toolbar>
     </AppBar>
-    // </Box>
   );
 }

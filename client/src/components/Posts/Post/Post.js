@@ -20,26 +20,31 @@ import { deletePost, likePost } from "../../../actions/posts";
 const Post = ({ post, setCurrentId, setNewPost }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userId = localStorage.getItem("profile")
+    ? JSON.parse(localStorage.getItem("profile")).result._id
+    : "";
 
   return (
     <Card>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-            {post.creator[0]}
+            {post?.creatorName[0]}
           </Avatar>
         }
         action={
-          <IconButton
-            title="Edit"
-            aria-label="settings"
-            onClick={() => {
-              setCurrentId(post._id);
-              setNewPost(true);
-            }}
-          >
-            <MoreHoriz />
-          </IconButton>
+          post.creatorId === userId && (
+            <IconButton
+              title="Edit"
+              aria-label="settings"
+              onClick={() => {
+                setCurrentId(post._id);
+                setNewPost(true);
+              }}
+            >
+              <MoreHoriz />
+            </IconButton>
+          )
         }
         title={post.title}
         subheader={moment(post.createdAt).fromNow()}
@@ -63,14 +68,30 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           Like &nbsp;
           {post.likes.length}
         </Button>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => dispatch(deletePost(post._id, navigate))}
-        >
-          <Delete fontSize="small" />
-          Delete
+        {post.creatorId === userId && (
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => dispatch(deletePost(post._id, navigate))}
+          >
+            <Delete fontSize="small" />
+            Delete
+          </Button>
+        )}
+        {/* 
+        download functionality #############
+        <Button>
+          <a
+            href={`${post.selectedFile}`}
+            download
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <DownloadForOffline />
+          </a>
         </Button>
+        */}
       </CardActions>
     </Card>
   );

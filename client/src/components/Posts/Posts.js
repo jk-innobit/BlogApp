@@ -1,29 +1,25 @@
 import React from "react";
-import { Grid, CircularProgress } from "@mui/material";
-import Post from "./Post/Post";
+import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
 import Masonry from "@mui/lab/Masonry";
 
+import Post from "./Post/Post";
+import { useParams } from "react-router-dom";
+
 const Posts = ({ setCurrentId, setNewPost }) => {
-  const posts = useSelector((state) => state.posts);
+  let posts = useSelector((state) => state.posts);
+  const category = useParams();
+  if (category.categoryId) {
+    posts = posts.filter((item) => item.category === category.categoryId);
+  } else if (category.userId) {
+    posts = posts.filter((item) => item.creatorId === category.userId);
+  }
   return !posts.length ? (
     <CircularProgress />
   ) : (
-    <Masonry
-      columns={3}
-      spacing={1}
-      defaultHeight={450}
-      defaultColumns={3}
-      defaultSpacing={1}
-    >
+    <Masonry columns={{ xs: 1, sm: 2, md: 4 }} spacing={1}>
       {posts.map((post) => (
-        <Grid item key={post._id} xs={12} sm={4}>
-          <Post
-            post={post}
-            setCurrentId={setCurrentId}
-            setNewPost={setNewPost}
-          />
-        </Grid>
+        <Post post={post} setCurrentId={setCurrentId} setNewPost={setNewPost} />
       ))}
     </Masonry>
   );

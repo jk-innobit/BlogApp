@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js";
+import Imager from "../models/ImageSchema.js";
 
 const router = express.Router();
 
@@ -17,7 +18,8 @@ export const createPost = async (req, res) => {
   const post = req.body;
   const newPostMessage = new PostMessage({
     ...post,
-    creator: req?.name,
+    creatorName: req?.name,
+    creatorId: req?.userId,
   });
   try {
     await newPostMessage.save();
@@ -64,4 +66,24 @@ export const likePost = async (req, res) => {
   res.json(updatedPost);
 };
 
+// export const setImage = async (req, res) => {
+//   const data = req.body;
+//   const image = new Imager({ ...data, image: data.image });
+//   try {
+//     await image.save();
+//     console.log(image);
+//     res.status(201).json({ id: image._id });
+//   } catch (error) {
+//     res.status(409).json({ message: error.message });
+//   }
+// };
+// export const getImage = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const image = await Imager.findById(id);
+//     res.status(200).json(image.image);
+//   } catch (error) {
+//     res.status(404).json({ message: error.message });
+//   }
+// };
 export default router;

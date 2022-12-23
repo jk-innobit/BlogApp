@@ -3,9 +3,6 @@ export const auth = (state = { authData: null }, action) => {
     case "auth":
       localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
       return { ...state, authData: action?.data };
-    case "signIn":
-      localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
-      return { ...state, authData: action?.data };
 
     case "signOut":
       localStorage.clear();

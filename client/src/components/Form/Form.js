@@ -3,65 +3,87 @@ import {
   TextField,
   Typography,
   Button,
-  Paper,
   Dialog,
   IconButton,
   Box,
+  Select,
+  MenuItem,
+  Grid,
+  FormControl,
+  FormHelperText,
+  InputLabel,
 } from "@mui/material";
+import { Clear, Close } from "@mui/icons-material";
 import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, updatePost } from "../../actions/posts";
-import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 
+import { createPost, updatePost } from "../../actions/posts";
+import { categories } from "../Sidebar/Sidebar";
+
 const initialValues = {
-  creator: "",
   title: "",
   message: "",
   tags: [],
+  category: "",
   selectedFile: "",
+};
+const errorValues = {
+  title: false,
+  tags: false,
+  message: false,
+  category: false,
+  selectedFile: false,
 };
 
 const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
   const [postData, setPostData] = useState(initialValues);
-  const user = localStorage.getItem("profile");
+  const [msg, setMsg] = useState(errorValues);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const post = useSelector((state) =>
     currentId ? state.posts.find((p) => p._id === currentId) : null
   );
+
   useEffect(() => {
     if (post) {
       setPostData(post);
     }
   }, [post]);
 
-  const dispatch = useDispatch();
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setNewPost(false);
-    if (currentId) {
-      dispatch(
-        updatePost(
-          currentId,
-          { ...postData, name: user?.result?.name },
-          navigate
-        )
-      );
+    if (postData.title === "") {
+      setMsg({ ...msg, title: true });
+    } else if (postData.message === "") {
+      setMsg({ ...msg, message: true });
+    } else if (postData.tags.length === 0) {
+      setMsg({ ...msg, tags: true });
+    } else if (postData.category === "") {
+      setMsg({ ...msg, category: true });
+    } else if (postData.selectedFile === "") {
+      setMsg({ ...msg, selectedFile: true });
     } else {
-      dispatch(createPost({ ...postData, name: user?.result?.name }, navigate));
+      e.preventDefault();
+      setNewPost(false);
+      if (currentId) {
+        dispatch(updatePost(currentId, postData, navigate));
+      } else {
+        dispatch(createPost(postData, navigate));
+      }
+      clear();
     }
+  };
+
+  const handleClose = () => {
+    setMsg(errorValues);
+    setNewPost(false);
     clear();
   };
+
   const clear = () => {
     setCurrentId(null);
-    setPostData({
-      creator: "",
-      title: "",
-      message: "",
-      tags: [],
-      selectedFile: "",
-    });
+    setPostData(initialValues);
   };
 
   return (
@@ -71,95 +93,175 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
         setNewPost(false);
         clear();
       }}
+      fullWidth
+      scroll="paper"
     >
-      <Paper sx={{ marginTop: "10px", padding: "10px" }}>
-        <form
-          autoComplete="off"
-          noValidate
-          onSubmit={handleSubmit}
-          style={{ textAlign: "center" }}
+      <Box
+        component={"form"}
+        autoComplete="off"
+        noValidate
+        onSubmit={handleSubmit}
+        style={{ textAlign: "center" }}
+        m={2}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography
-              variant="h6"
-              sx={{ width: "100%", textAlign: "center" }}
-            >
-              {currentId ? "Editing" : "Creating"} a Post
-            </Typography>
-            <IconButton onClick={() => setNewPost(false)}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <TextField
-            sx={{ marginTop: "5px" }}
-            name="title"
-            variant="outlined"
-            label="Title"
-            fullWidth
-            value={postData.title}
-            onChange={(e) =>
-              setPostData({ ...postData, title: e.target.value })
-            }
-          />
-          <TextField
-            sx={{ marginTop: "5px" }}
-            name="message"
-            variant="outlined"
-            label="Message"
-            fullWidth
-            value={postData.message}
-            onChange={(e) =>
-              setPostData({ ...postData, message: e.target.value })
-            }
-          />
-          <TextField
-            sx={{ marginTop: "5px" }}
-            name="tags"
-            variant="outlined"
-            label="Tags"
-            fullWidth
-            value={postData.tags}
-            onChange={(e) =>
-              setPostData({ ...postData, tags: e.target.value.split(",") })
-            }
-          />
-          <div style={{ marginTop: "5px" }}>
-            {postData.selectedFile === "" || currentId ? (
-              <FileBase
-                type="file"
-                multiple={false}
-                onDone={({ base64 }) =>
-                  setPostData({ ...postData, selectedFile: base64 })
-                }
+          <Typography variant="h6" sx={{ width: "100%", textAlign: "center" }}>
+            {currentId ? "Editing" : "Creating"} a Blog
+          </Typography>
+          <IconButton onClick={handleClose}>
+            <Close />
+          </IconButton>
+        </Box>
+        <Grid spacing={1}>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ marginTop: "10px" }}
+              error={msg.title}
+              autoFocus
+              helperText={msg.title ? "*required" : null}
+              name="title"
+              variant="outlined"
+              label="Title"
+              fullWidth
+              value={postData.title}
+              onChange={(e) => {
+                setMsg({ ...msg, title: false });
+                setPostData({ ...postData, title: e.target.value });
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ marginTop: "10px" }}
+              name="message"
+              variant="outlined"
+              label="Message"
+              error={msg.message}
+              helperText={msg.message ? "*required" : null}
+              fullWidth
+              value={postData.message}
+              onChange={(e) => {
+                setMsg({ ...msg, message: false });
+                setPostData({ ...postData, message: e.target.value });
+              }}
+            />
+          </Grid>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                sx={{ marginTop: "10px" }}
+                name="tags"
+                error={msg.tags}
+                helperText={msg.tags ? "*required" : null}
+                variant="outlined"
+                label="Tags"
+                fullWidth
+                value={postData.tags}
+                onChange={(e) => {
+                  setMsg({ ...msg, tags: false });
+                  setPostData({ ...postData, tags: e.target.value.split(",") });
+                }}
               />
-            ) : (
-              <Typography color="text.secondary" fontSize="small">
-                File Uploaded
-              </Typography>
-            )}
-          </div>
-          <Button
-            sx={{ marginTop: "5px" }}
-            variant="contained"
-            fullWidth
-            type="submit"
-            color="primary"
-            size="large"
-          >
-            Submit
-          </Button>
-          <Button
-            sx={{ marginTop: "5px" }}
-            variant="contained"
-            fullWidth
-            color="secondary"
-            size="small"
-            onClick={clear}
-          >
-            Clear
-          </Button>
-        </form>
-      </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl
+                fullWidth
+                error={msg.category}
+                sx={{ marginTop: "10px" }}
+              >
+                <InputLabel>Category</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={postData.category}
+                  label="Category"
+                  onChange={(e) => {
+                    setMsg({ ...msg, category: false });
+                    setPostData({ ...postData, category: e.target.value });
+                  }}
+                >
+                  {categories.map((item) => (
+                    <MenuItem value={item.name}>{item.name}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {msg.category ? "*required" : null}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} pt={2}>
+            <Box
+              sx={{
+                border: `${msg.selectedFile ? "1px solid red" : "none"}`,
+                p: "3px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {postData.selectedFile === "" ? (
+                <FileBase
+                  type="file"
+                  multiple={false}
+                  onDone={({ base64 }) => {
+                    console.log(base64);
+                    setMsg({ ...msg, selectedFile: false });
+                    setPostData({ ...postData, selectedFile: base64 });
+                  }}
+                />
+              ) : (
+                <>
+                  <img
+                    src={postData.selectedFile}
+                    alt="selected"
+                    height="100vh"
+                  />
+                  <IconButton
+                    onClick={() =>
+                      setPostData({ ...postData, selectedFile: "" })
+                    }
+                  >
+                    <Clear />
+                  </IconButton>
+                </>
+              )}
+            </Box>
+            {msg.selectedFile && <div style={{ color: "red" }}>*required</div>}
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              sx={{ marginTop: "5px" }}
+              variant="contained"
+              fullWidth
+              onClick={handleSubmit}
+              color="primary"
+              size="large"
+            >
+              Submit
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              sx={{ marginTop: "5px" }}
+              variant="contained"
+              fullWidth
+              color="secondary"
+              size="small"
+              onClick={clear}
+            >
+              Clear
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
     </Dialog>
   );
 };

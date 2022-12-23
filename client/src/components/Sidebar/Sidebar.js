@@ -23,8 +23,9 @@ import {
 } from "@mui/icons-material";
 
 import { Context } from "../../App";
+import { useNavigate } from "react-router-dom";
 
-const categories = [
+export const categories = [
   { key: 0, name: "Technology", path: "", icon: <Computer /> },
   { key: 1, name: "Cars", path: "", icon: <TimeToLeave /> },
   { key: 2, name: "Nature", path: "", icon: <Nature /> },
@@ -33,7 +34,9 @@ const categories = [
 ];
 
 export default function Sidebar({ open, setOpen }) {
-  const { userData, loggedIn } = React.useContext(Context);
+  const { loggedIn } = React.useContext(Context);
+  const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem("profile"));
 
   return (
     <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
@@ -53,7 +56,12 @@ export default function Sidebar({ open, setOpen }) {
         </Typography>
         <List>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                navigate("/");
+                setOpen(false);
+              }}
+            >
               <ListItemIcon>
                 <Home />
               </ListItemIcon>
@@ -61,7 +69,12 @@ export default function Sidebar({ open, setOpen }) {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                setOpen(false);
+                navigate(`/myposts/${userData.result._id}`);
+              }}
+            >
               <ListItemIcon>
                 <Inbox />
               </ListItemIcon>
@@ -73,7 +86,12 @@ export default function Sidebar({ open, setOpen }) {
         <List>
           {categories.map((category) => (
             <ListItem key={category.key} disablePadding>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => {
+                  setOpen(false);
+                  navigate(`/category/${category.name}`);
+                }}
+              >
                 <ListItemIcon>{category.icon}</ListItemIcon>
                 <ListItemText primary={category.name} />
               </ListItemButton>

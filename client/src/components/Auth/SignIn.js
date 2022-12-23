@@ -128,9 +128,9 @@ export default function SignIn({ setLogin }) {
             >
               Sign In
             </Button>
-            <Grid container>
+            <Grid container sx={{ alignItems: "center" }}>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" sx={{ textDecoration: "none" }}>
                   Forgot password?
                 </Link>
               </Grid>

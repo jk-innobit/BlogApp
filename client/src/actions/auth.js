@@ -18,3 +18,11 @@ export const signUp = (formData, navigate) => async (dispatch) => {
     console.log(error.message);
   }
 };
+export const signOut = (navigate) => async (dispatch) => {
+  try {
+    dispatch({ type: "signOut" });
+    navigate("/auth");
+  } catch (error) {
+    console.log(error.message);
+  }
+};

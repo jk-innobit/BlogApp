@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Card,
   CardActions,
@@ -16,8 +16,10 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { deletePost, likePost } from "../../../actions/posts";
+import { Context } from "../../../App";
 
 const Post = ({ post, setCurrentId, setNewPost }) => {
+  const { loggedIn } = useContext(Context);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userId = localStorage.getItem("profile")
@@ -33,6 +35,7 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           </Avatar>
         }
         action={
+          loggedIn &&
           post.creatorId === userId && (
             <IconButton
               title="Edit"
@@ -58,27 +61,28 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           {post.message}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => dispatch(likePost(post._id, navigate))}
-        >
-          <ThumbUpAlt fontSize="small" />
-          Like &nbsp;
-          {post.likes.length}
-        </Button>
-        {post.creatorId === userId && (
+      {loggedIn && (
+        <CardActions>
           <Button
             size="small"
             color="primary"
-            onClick={() => dispatch(deletePost(post._id, navigate))}
+            onClick={() => dispatch(likePost(post._id, navigate))}
           >
-            <Delete fontSize="small" />
-            Delete
+            <ThumbUpAlt fontSize="small" />
+            Like &nbsp;
+            {post.likes.length}
           </Button>
-        )}
-        {/* 
+          {post.creatorId === userId && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => dispatch(deletePost(post._id, navigate))}
+            >
+              <Delete fontSize="small" />
+              Delete
+            </Button>
+          )}
+          {/* 
         download functionality #############
         <Button>
           <a
@@ -92,7 +96,8 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           </a>
         </Button>
         */}
-      </CardActions>
+        </CardActions>
+      )}
     </Card>
   );
 };

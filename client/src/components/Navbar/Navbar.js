@@ -16,17 +16,15 @@ import { deepOrange } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 
 import { Context } from "../../App";
-import Sidebar from "../Sidebar/Sidebar";
 import { signOut } from "../../actions/auth";
 import { useDispatch } from "react-redux";
 
-export default function Navbar({ setNewPost }) {
+export default function Navbar({ setNewPost, setOpen, open }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loggedIn } = React.useContext(Context);
+  const { loggedIn, setLoggedIn } = React.useContext(Context);
   const userData = JSON.parse(localStorage.getItem("profile"));
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -49,18 +47,22 @@ export default function Navbar({ setNewPost }) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2, display: { xs: "block", md: "none" } }}
-            onClick={() => setOpen(true)}
+            sx={{ mr: 2, display: { xs: "block", sm: "block", md: "none" } }}
+            onClick={() => setOpen(!open)}
           >
             <MenuIcon />
           </IconButton>
-          <Sidebar open={open} setOpen={setOpen} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Blog App
           </Typography>
-          <IconButton sx={{ color: "white" }} onClick={() => setNewPost(true)}>
-            <Add fontSize="large" />
-          </IconButton>
+          {loggedIn && (
+            <IconButton
+              sx={{ color: "white" }}
+              onClick={() => setNewPost(true)}
+            >
+              <Add fontSize="large" />
+            </IconButton>
+          )}
           {!loggedIn ? (
             <Button color="inherit" onClick={() => navigate("/auth")}>
               Login
@@ -93,7 +95,7 @@ export default function Navbar({ setNewPost }) {
                 <MenuItem>
                   <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => dispatch(signOut(navigate))}>
+                <MenuItem onClick={() => dispatch(signOut(setLoggedIn))}>
                   <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
               </Menu>

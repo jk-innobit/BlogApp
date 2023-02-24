@@ -19,7 +19,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { createPost, updatePost } from "../../actions/posts";
-import { categories } from "../Sidebar/Sidebar";
+
+const categories = [
+  { key: 1, name: "Technology", value: "technology" },
+  { key: 2, name: "Cars", value: "cars" },
+  { key: 3, name: "Nature", value: "nature" },
+  { key: 4, name: "Business", value: "business" },
+  { key: 5, name: "Animals", value: "animals" },
+];
 
 const initialValues = {
   title: "",
@@ -118,7 +125,7 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
             <Close />
           </IconButton>
         </Box>
-        <Grid spacing={1}>
+        <Grid container spacing={1}>
           <Grid item xs={12}>
             <TextField
               sx={{ marginTop: "10px" }}
@@ -186,8 +193,10 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
                     setPostData({ ...postData, category: e.target.value });
                   }}
                 >
-                  {categories.map((item) => (
-                    <MenuItem value={item.name}>{item.name}</MenuItem>
+                  {categories.map((category) => (
+                    <MenuItem value={category.value} key={category.key}>
+                      {category.name}
+                    </MenuItem>
                   ))}
                 </Select>
                 <FormHelperText>
@@ -212,7 +221,6 @@ const Form = ({ currentId, setCurrentId, newPost, setNewPost }) => {
                   type="file"
                   multiple={false}
                   onDone={({ base64 }) => {
-                    console.log(base64);
                     setMsg({ ...msg, selectedFile: false });
                     setPostData({ ...postData, selectedFile: base64 });
                   }}

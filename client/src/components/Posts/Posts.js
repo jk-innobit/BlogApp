@@ -1,5 +1,5 @@
 import React from "react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import Masonry from "@mui/lab/Masonry";
 
@@ -15,11 +15,16 @@ const Posts = ({ setCurrentId, setNewPost }) => {
     posts = posts.filter((item) => item.creatorId === category.userId);
   }
   return !posts.length ? (
-    <CircularProgress />
+    <Typography>No Items</Typography>
   ) : (
-    <Masonry columns={{ xs: 1, sm: 2, md: 4 }} spacing={1}>
+    <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
       {posts.map((post) => (
-        <Post post={post} setCurrentId={setCurrentId} setNewPost={setNewPost} />
+        <Post
+          key={post._id}
+          post={post}
+          setCurrentId={setCurrentId}
+          setNewPost={setNewPost}
+        />
       ))}
     </Masonry>
   );

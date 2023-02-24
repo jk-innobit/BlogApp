@@ -2,9 +2,12 @@ import * as api from "../api/index.js";
 
 export const getPosts = () => async (dispatch) => {
   try {
+    // setShowLoader(true);
     const { data } = await api.fetchPosts();
     dispatch({ type: "FETCH_ALL", payload: data });
+    // setShowLoader(false);
   } catch (error) {
+    // setShowLoader(false);
     console.log(error.message);
   }
 };

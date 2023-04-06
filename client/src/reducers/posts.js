@@ -1,16 +1,18 @@
-export const posts = (posts = [], action) => {
+export const posts = (state = { posts: [], loading: true }, action) => {
   switch (action.type) {
     case "FETCH_ALL":
-      return action.payload;
+      return { posts: action.data, loading: action.loading };
     case "CREATE":
-      return [...posts, action.payload];
+      return { posts: [...state.posts, action.data] };
     case "UPDATE":
-      return posts.map((post) =>
-        post._id === action.payload._id ? action.payload : post
-      );
+      return {
+        posts: state.posts.map((post) =>
+          post._id === action.data._id ? action.data : post
+        ),
+      };
     case "DELETE":
-      return posts.filter((post) => post._id !== action.payload);
+      return { posts: state.posts.filter((post) => post._id !== action.data) };
     default:
-      return posts;
+      return state;
   }
 };

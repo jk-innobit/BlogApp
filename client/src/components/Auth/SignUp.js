@@ -20,7 +20,7 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { signUp } from "../../actions/auth";
@@ -57,11 +57,11 @@ export default function SignUp({ setLogin }) {
   const [formData, setFormData] = useState(initialValues);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signUp(formData, navigate));
+    dispatch(signUp(formData, setLogin));
   };
 
   const handleShowPassword = () => {

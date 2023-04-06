@@ -24,8 +24,8 @@ import {
   ChevronLeft,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { Context } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export const private_Categories = [
   { key: 0, name: "Home", path: "/", icon: <Home /> },
@@ -85,48 +85,45 @@ const TabDrawer = styled(Drawer, {
   }),
 }));
 
-export function SidebarItems({ loggedIn, userId, setOpen, open, screen }) {
+export function SidebarItems({ userId, setOpen, open, screen }) {
   const navigate = useNavigate();
-  console.log(userId);
   return (
     <>
-      {loggedIn && (
-        <List>
-          {private_Categories.map((category) => (
-            <ListItem disablePadding key={category.key}>
-              <ListItemButton
+      <List>
+        {private_Categories.map((category) => (
+          <ListItem disablePadding key={category.key}>
+            <ListItemButton
+              sx={{
+                minHeight: 40,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              onClick={() => {
+                screen !== "tab" && setOpen(false);
+                navigate(
+                  category.name === "Home"
+                    ? category.path
+                    : `${category.path + userId}`
+                );
+              }}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 40,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-                onClick={() => {
-                  screen !== "tab" && setOpen(false);
-                  navigate(
-                    category.name === "Home"
-                      ? category.path
-                      : `${category.path + userId}`
-                  );
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {category.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={category.name}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      )}
+                {category.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={category.name}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
       <Divider />
       <List>
         {public_Categories.map((category) => (
@@ -164,8 +161,7 @@ export function SidebarItems({ loggedIn, userId, setOpen, open, screen }) {
 }
 
 export default function Sidebar({ open, setOpen }) {
-  const { loggedIn } = React.useContext(Context);
-  const userData = JSON.parse(localStorage.getItem("profile"));
+  const user = useSelector((state) => state.auth);
   const mobMin = useMediaQuery("(min-width:0px)");
   const mobMax = useMediaQuery("(max-width:599px)");
   const mobWidth = mobMin && mobMax;
@@ -192,14 +188,13 @@ export default function Sidebar({ open, setOpen }) {
                 margin: "10px",
               }}
             >
-              Welcome {loggedIn && userData?.result?.name}
+              Welcome {user?.authData?.name}
               <IconButton onClick={() => setOpen(false)}>
                 <ChevronLeft />
               </IconButton>
             </Typography>
             <SidebarItems
-              loggedIn={loggedIn}
-              userId={userData?.result._id}
+              userId={user?.authData?.id}
               setOpen={setOpen}
               open={open}
               screen={"mob"}
@@ -224,9 +219,9 @@ export default function Sidebar({ open, setOpen }) {
                 justifyContent: "space-between",
                 margin: "12px",
               }}
-              variant={!loggedIn ? "h6" : "body1"}
+              variant={"body1"}
             >
-              Welcome {loggedIn && userData?.result?.name}
+              Welcome {user?.authData?.name}
               <IconButton onClick={() => setOpen(false)}>
                 <ChevronLeft />
               </IconButton>
@@ -234,8 +229,7 @@ export default function Sidebar({ open, setOpen }) {
           )}
           {!open && <Toolbar />}
           <SidebarItems
-            loggedIn={loggedIn}
-            userId={userData?.result._id}
+            userId={user?.authData?.id}
             setOpen={setOpen}
             open={open}
             screen={"tab"}
@@ -258,8 +252,7 @@ export default function Sidebar({ open, setOpen }) {
         >
           <Toolbar />
           <SidebarItems
-            loggedIn={loggedIn}
-            userId={userData?.result._id}
+            userId={user?.authData?.id}
             setOpen={setOpen}
             open={true}
             screen={"lap"}

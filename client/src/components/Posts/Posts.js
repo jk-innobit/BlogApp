@@ -7,16 +7,17 @@ import Post from "./Post/Post";
 import { useParams } from "react-router-dom";
 
 const Posts = ({ setCurrentId, setNewPost }) => {
-  let posts = useSelector((state) => state.posts);
+  let data = useSelector((state) => state.posts);
   const category = useParams();
+  let posts = data.posts || [];
   if (category.categoryId) {
-    posts = posts.filter((item) => item.category === category.categoryId);
+    posts = data.posts.filter((item) => item.category === category.categoryId);
   } else if (category.userId) {
-    posts = posts.filter((item) => item.creatorId === category.userId);
+    posts = data.posts.filter((item) => item.creatorId === category.userId);
   }
-  return !posts.length ? (
-    <Typography>No Items</Typography>
-  ) : (
+  return data.loading ? (
+    <CircularProgress />
+  ) : posts.length !== 0 ? (
     <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
       {posts.map((post) => (
         <Post
@@ -27,6 +28,8 @@ const Posts = ({ setCurrentId, setNewPost }) => {
         />
       ))}
     </Masonry>
+  ) : (
+    <Typography>No Items</Typography>
   );
 };
 

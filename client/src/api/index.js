@@ -1,13 +1,12 @@
 import axios from "axios";
+import { getItem } from "../utils";
 
 const API = axios.create({ baseURL: "http://localhost:5000" });
 
 API.interceptors.request.use((req) => {
-  //   console.log(JSON.parse(localStorage.getItem("profile")).token);
-  if (localStorage.getItem("profile")) {
-    req.headers.authorization = `Bearer ${
-      JSON.parse(localStorage.getItem("profile"))?.token
-    }`;
+  let token = getItem(process.env.REACT_APP_USERDATA_KEY);
+  if (token) {
+    req.headers.authorization = `Bearer ${token}`;
   }
   return req;
 });

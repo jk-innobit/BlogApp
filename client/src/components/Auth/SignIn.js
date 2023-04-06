@@ -22,6 +22,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { getEncryptedValue } from "../../utils";
 
 const initialValues = { email: "", password: "" };
 
@@ -52,7 +53,8 @@ export default function SignIn({ setLogin }) {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signIn(formData, navigate));
+    let encryptPassword = getEncryptedValue(formData.password);
+    dispatch(signIn({ ...formData, password: encryptPassword }, navigate));
   };
 
   const handleShowPassword = () => {

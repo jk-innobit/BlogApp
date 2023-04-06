@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   Card,
   CardActions,
@@ -12,19 +12,16 @@ import {
 } from "@mui/material";
 import { ThumbUpAlt, Delete, MoreHoriz } from "@mui/icons-material";
 import moment from "moment";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { deletePost, likePost } from "../../../actions/posts";
-import { Context } from "../../../App";
 
 const Post = ({ post, setCurrentId, setNewPost }) => {
-  const { loggedIn } = useContext(Context);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userId = localStorage.getItem("profile")
-    ? JSON.parse(localStorage.getItem("profile")).result._id
-    : "";
+  const user = useSelector((state) => state.auth);
+  const userId = user.authData?.id;
 
   return (
     <Card>
@@ -35,7 +32,7 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           </Avatar>
         }
         action={
-          loggedIn &&
+          user.loggedIn &&
           post.creatorId === userId && (
             <IconButton
               title="Edit"
@@ -61,12 +58,12 @@ const Post = ({ post, setCurrentId, setNewPost }) => {
           {post.message}
         </Typography>
       </CardContent>
-      {loggedIn && (
+      {user.loggedIn && (
         <CardActions>
           <Button
             size="small"
             color="primary"
-            onClick={() => dispatch(likePost(post._id, navigate))}
+            onClick={() => dispatch(likePost(post._id))}
           >
             <ThumbUpAlt fontSize="small" />
             Like &nbsp;

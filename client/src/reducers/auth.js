@@ -1,14 +1,12 @@
-export const auth = (state = { authData: null }, action) => {
-  switch (action.type) {
-    case "auth":
-      localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
-      return { ...state, authData: action?.data };
+import { getInitialState } from "../utils";
 
-    case "signOut":
+const initialState = getInitialState();
+export const auth = (state = initialState, action) => {
+  if (action.type === "auth") {
+    if (!action.loggedIn) {
       localStorage.clear();
-      return { ...state, authData: action?.data };
-
-    default:
-      return state;
+    }
+    return { ...state, authData: action?.data, loggedIn: action?.loggedIn };
   }
+  return state;
 };

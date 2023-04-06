@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 const auth = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    let decodedData = jwt.verify(token, "test");
+    let decodedData = jwt.verify(token, process.env.JWT_KEY);
     req.name = decodedData?.name;
     req.userId = decodedData?.id;
     next();
